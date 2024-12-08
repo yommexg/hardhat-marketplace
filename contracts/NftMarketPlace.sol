@@ -6,16 +6,16 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 // Custom error definitions to save gas when reverting transactions.
-error NftMarketPlace__PriceMustBeAboveZero();
-error NftMarketPlace__NotApprovedForMarketPlace();
 error NftMarketPlace__AlreadyListed(address nftAddress, uint256 tokenId);
-error NftMarketPlace__NotOwner();
 error NftMarketPlace__NotListed(address nftAddress, uint256 tokenId);
 error NftMarketPlace__PriceNotMet(
     address nftAddress,
     uint256 tokenId,
     uint256 price
 );
+error NftMarketPlace__NotOwner();
+error NftMarketPlace__PriceMustBeAboveZero();
+error NftMarketPlace__NotApprovedForMarketPlace();
 error NftMarketPlace__NoProceeds();
 error NftMarketPlace__TransferFailed();
 
@@ -225,6 +225,10 @@ contract NftMarketPlace is ReentrancyGuard {
         isListed(nftAddress, tokenId) // Ensure the item is listed.
         isOwner(nftAddress, tokenId, msg.sender) // Ensure the caller is the owner.
     {
+        if (newPrice <= 0) {
+            revert NftMarketPlace__PriceMustBeAboveZero();
+        }
+
         // Update the price of the listed item.
         s_listings[nftAddress][tokenId].price = newPrice;
 

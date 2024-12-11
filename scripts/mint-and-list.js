@@ -1,9 +1,10 @@
-const { ethers, network } = require("hardhat");
+const { ethers, network, deployments } = require("hardhat");
 const { moveBlocks } = require("../utils/move-block");
 
 const PRICE = ethers.utils.parseEther("0.1");
 
 async function mintAndList() {
+  await deployments.fixture(["basicnft", "nftmarketplace"]);
   const nftMarketPlace = await ethers.getContract("NftMarketPlace");
   const basicNft = await ethers.getContract("BasicNft");
   console.log("Minting...");
